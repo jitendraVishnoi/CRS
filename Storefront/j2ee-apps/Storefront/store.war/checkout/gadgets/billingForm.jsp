@@ -99,7 +99,7 @@
 		<div style="padding-top:30px">
 			<table>
 				<tr>
-					<td style="padding-right: 10px"><dsp:input bean="BillingFormHandler.paymentType" type="radio" value="paypal"/></td>
+					<td style="padding-right:10px"><dsp:input bean="BillingFormHandler.paymentType" type="radio" value="paypal"/></td>
 					<td><dsp:include page="payPalExpress.jsp" /></td>
 				</tr>
 			</table>

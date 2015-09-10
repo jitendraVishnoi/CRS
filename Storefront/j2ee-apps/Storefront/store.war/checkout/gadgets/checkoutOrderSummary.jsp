@@ -304,8 +304,6 @@
       </dsp:include>
     </c:if>
 	
-	<dsp:include page="/checkout/gadgets/payPalExpress.jsp">
-	</dsp:include>	
   </div>
 </dsp:page>
 <%-- @version $Id: //hosting-blueprint/B2CBlueprint/version/11.1/Storefront/j2ee/store.war/checkout/gadgets/checkoutOrderSummary.jsp#1 $$Change: 875535 $--%>

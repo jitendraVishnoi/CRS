@@ -29,6 +29,7 @@ import atg.commerce.order.HardgoodShippingGroup;
 import atg.commerce.order.Order;
 import atg.commerce.order.ShippingGroup;
 import atg.commerce.pricing.PricingTools;
+import atg.repository.RepositoryItem;
 
 public class PaypalTools {
 
@@ -452,7 +453,7 @@ public class PaypalTools {
 				for (int count = 0; count < items.size(); count++) {
 					nvpstr = nvpstr.concat("&L_PAYMENTREQUEST_0_AMT" + count + "=" + getPricingTools().round(items.get(count).getPriceInfo().getAmount(), 2));
 					nvpstr = nvpstr.concat("&L_PAYMENTREQUEST_0_QTY" + count + "=" + items.get(count).getQuantity());
-					nvpstr = nvpstr.concat("&L_PAYMENTREQUEST_0_NAME" + count + "=" + items.get(count).getCatalogRefId());
+					nvpstr = nvpstr.concat("&L_PAYMENTREQUEST_0_NAME" + count + "=" + ((RepositoryItem) items.get(count).getAuxiliaryData().getCatalogRef()).getItemDisplayName());
 				}
 				nvpstr = nvpstr.concat("&PAYMENTREQUEST_0_SHIPPINGAMT=" + getPricingTools().round(shippingAmt,2)); 	
 				nvpstr = nvpstr.concat("&useraction=commit");
