@@ -29,9 +29,10 @@ import atg.commerce.order.HardgoodShippingGroup;
 import atg.commerce.order.Order;
 import atg.commerce.order.ShippingGroup;
 import atg.commerce.pricing.PricingTools;
+import atg.nucleus.GenericService;
 import atg.repository.RepositoryItem;
 
-public class PaypalTools {
+public class PaypalTools extends GenericService{
 
 	private String gv_APIUserName;
 	private String gv_APIPassword;
@@ -87,7 +88,7 @@ public class PaypalTools {
 		String HTTPREQUEST_PROXYSETTING_PORT = "";
 		boolean USE_PROXY = false;
 
-		gv_Version = "93";
+		gv_Version = "123";
 
 		// WinObjHttp Request proxy settings.
 		gv_ProxyServer = HTTPREQUEST_PROXYSETTING_SERVER;
@@ -448,13 +449,13 @@ public class PaypalTools {
 
 				/*Setting Items details*/
 				//PAYMENTREQUEST_0_ITEMAMT
-				nvpstr = nvpstr.concat("&PAYMENTREQUEST_0_ITEMAMT=" + getPricingTools().round(order.getPriceInfo().getAmount(), 2));
 				List<CommerceItem> items = order.getCommerceItems();
 				for (int count = 0; count < items.size(); count++) {
-					nvpstr = nvpstr.concat("&L_PAYMENTREQUEST_0_AMT" + count + "=" + getPricingTools().round(items.get(count).getPriceInfo().getAmount(), 2));
+					nvpstr = nvpstr.concat("&L_PAYMENTREQUEST_0_AMT" + count + "=" + items.get(count).getPriceInfo().getListPrice());
 					nvpstr = nvpstr.concat("&L_PAYMENTREQUEST_0_QTY" + count + "=" + items.get(count).getQuantity());
 					nvpstr = nvpstr.concat("&L_PAYMENTREQUEST_0_NAME" + count + "=" + ((RepositoryItem) items.get(count).getAuxiliaryData().getCatalogRef()).getItemDisplayName());
 				}
+				nvpstr = nvpstr.concat("&PAYMENTREQUEST_0_ITEMAMT=" + getPricingTools().round(order.getPriceInfo().getAmount(), 2));
 				nvpstr = nvpstr.concat("&PAYMENTREQUEST_0_SHIPPINGAMT=" + getPricingTools().round(shippingAmt,2)); 	
 				nvpstr = nvpstr.concat("&useraction=commit");
 				/*
@@ -462,16 +463,9 @@ public class PaypalTools {
 				 * call succeded, then redirect the buyer to PayPal to begin to
 				 * authorize payment. If an error occured, show the resulting errors
 				 */
-
+				//vlogInfo("paypal nvpstr : {0}", nvpstr);
 				HashMap nvp = httpcall("SetExpressCheckout", nvpstr);
-				String strAck = nvp.get("ACK").toString();
-				if (strAck != null
-						&& (strAck.equalsIgnoreCase("Success") || strAck
-								.equalsIgnoreCase("SuccessWithWarning"))) {
 					return nvp;
-				}
-
-				return null;
 
 	}
 

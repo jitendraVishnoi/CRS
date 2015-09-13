@@ -4,3 +4,6 @@
 *.class
 *.classpath
 *.classpath
+*.classpath
+*.class
+Storefront/META-INF/MANIFEST.MF

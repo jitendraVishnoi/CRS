@@ -1,4 +1,4 @@
-<%-- 
+<!-- 
   This container page renders the shipping-single form contents. It renders necessary 
   hidden fields and includes shippingAddresses.jsp and shippingForm.jsp pages.
 
@@ -8,7 +8,7 @@
   Optional parameters:
     init
       When set to true shipping related commerce objects are initialized.
---%>
+-->
 <dsp:page>
   <dsp:importbean bean="/atg/commerce/order/purchase/ShippingGroupFormHandler"/>
   <dsp:importbean bean="/atg/commerce/order/purchase/ShippingGroupDroplet"/>
@@ -22,12 +22,12 @@
   
   <div id="atg_store_checkout" class="atg_store_main"> 
     
-    <%-- INITALIZE COMMERCE SHIPPING OBJECTS --%>
+    <!-- INITALIZE COMMERCE SHIPPING OBJECTS -->
     <c:if test='${init == "true"}'>
       
       <dsp:getvalueof var="isTransient" bean="Profile.transient"/>
 
-      <%--
+      <!--
         Used to initialize ShippingGroups and CommerceItemShippingInfo objects. We don't want to 
         clear shipping groups if the user is transient, if they re-enter the checkout previously
         entered addresses will appear. 
@@ -47,7 +47,7 @@
         
         Open Parameters:
           output
-      --%>
+      -->
       <dsp:droplet name="ShippingGroupDroplet">
         <dsp:param name="createOneInfoPerUnit" value="false"/>
         <dsp:param name="clearShippingInfos" param="init"/>
