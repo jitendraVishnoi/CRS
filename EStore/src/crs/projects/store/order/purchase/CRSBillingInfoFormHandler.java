@@ -15,6 +15,7 @@ import atg.commerce.order.purchase.ShippingGroupContainerService;
 import atg.core.util.StringUtils;
 import atg.droplet.DropletException;
 import atg.projects.store.order.purchase.BillingInfoFormHandler;
+import atg.projects.store.order.purchase.StoreBillingProcessHelper;
 import atg.repository.RepositoryItem;
 import atg.servlet.DynamoHttpServletRequest;
 import atg.servlet.DynamoHttpServletResponse;
@@ -49,16 +50,10 @@ public class CRSBillingInfoFormHandler extends BillingInfoFormHandler {
 		HashMap<String, String> details = new HashMap<String, String>();
 		details.put("returnUrl", getPayPalReturnUrl());
 		details.put("cancelUrl", getPayPalCancelUrl());
-		
-		Map<String, ShippingGroup> shippingGroups = getShippingGroupContainerService()
-				.getShippingGroupMap();
-		HardgoodShippingGroup defaultAddress = null;
-		for (Entry<String, ShippingGroup> entry : shippingGroups.entrySet()) {
-			if (entry.getKey().equals(getStoredAddressSelection())) {
-				defaultAddress = (HardgoodShippingGroup) entry.getValue();
-				break;
-			}
-		}
+
+		getBillingHelper().setupPaypalPaymentGrpForOrder(getOrder(), getProfile());
+
+		HardgoodShippingGroup defaultAddress = getShippingGrp();
 
 		Map nvpResponse = getPaypalManager().callExpressCheckout(getOrder(), defaultAddress,
 				details);
@@ -72,6 +67,19 @@ public class CRSBillingInfoFormHandler extends BillingInfoFormHandler {
 					(String) nvpResponse.get("L_LONGMESSAGE0")));
 
 		}
+	}
+
+	protected HardgoodShippingGroup getShippingGrp() {
+		Map<String, ShippingGroup> shippingGroups = getShippingGroupContainerService()
+				.getShippingGroupMap();
+		HardgoodShippingGroup defaultAddress = null;
+		for (Entry<String, ShippingGroup> entry : shippingGroups.entrySet()) {
+			if (entry.getKey().equals(getStoredAddressSelection())) {
+				defaultAddress = (HardgoodShippingGroup) entry.getValue();
+				break;
+			}
+		}
+		return defaultAddress;
 	}
 
 	private void addNewAddress() {
@@ -140,6 +148,11 @@ public class CRSBillingInfoFormHandler extends BillingInfoFormHandler {
 
 	public void setPaypalUrl(String paypalUrl) {
 		this.paypalUrl = paypalUrl;
+	}
+
+	@Override
+	public CRSBillingProcessHelper getBillingHelper() {
+		return (CRSBillingProcessHelper) super.getBillingHelper();
 	}
 
 }

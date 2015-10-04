@@ -7,3 +7,4 @@
 *.classpath
 *.class
 Storefront/META-INF/MANIFEST.MF
+*.class

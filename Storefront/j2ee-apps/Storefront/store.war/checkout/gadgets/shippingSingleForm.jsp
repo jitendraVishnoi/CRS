@@ -51,11 +51,16 @@
       <dsp:droplet name="ShippingGroupDroplet">
         <dsp:param name="createOneInfoPerUnit" value="false"/>
         <dsp:param name="clearShippingInfos" param="init"/>
-        <dsp:param name="clearShippingGroups" value="${not isTransient}"/>
+        <dsp:param name="clearShippingGroups" param="init"/>
         <dsp:param name="shippingGroupTypes" value="hardgoodShippingGroup"/>
         <dsp:param name="initShippingGroups" param="init"/>
         <dsp:param name="initBasedOnOrder" param="init"/>
-        <dsp:oparam name="output"/>
+        <dsp:param name="initShippingInfos" param="init"/>
+        <dsp:oparam name="output">
+        INIT : <dsp:valueof param="init"/>
+        SHIPPING_GROUPS : <dsp:valueof param="shippingGroups" />
+        CISI_MAP : <dsp:valueof param="shippingInfos" />
+        </dsp:oparam>
       </dsp:droplet>
     </c:if>
     
@@ -68,7 +73,7 @@
     --%>
     <dsp:getvalueof var="shippingGroupMap" vartype="java.lang.Object" 
                     bean="ShippingGroupContainerService.shippingGroupMapForDisplay"/> 
-    
+    <!--shippingGroupMap : <c:out value="${shippingGroupMap}"/>  -->
     <c:if test="${not empty shippingGroupMap}">
       
       <%-- 
