@@ -140,6 +140,64 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
+
+<!-- For PayPal Module -->
+	<servlet>
+		<servlet-name>PayPalInstantUpdateServletBridge</servlet-name>
+		<servlet-class>com.crs.ServletBridge</servlet-class>
+		<init-param>
+			<param-name>loggingDebug</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<init-param>
+			<param-name>destinationServlet</param-name>
+			<param-value>
+		ctx:dynamo:/crs/paypal/servlet/PayPalInstantUpdateServlet
+		 </param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>CancelPayPalPaymentServletBridge</servlet-name>
+		<servlet-class>com.crs.ServletBridge</servlet-class>
+		<init-param>
+			<param-name>loggingDebug</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<init-param>
+			<param-name>destinationServlet</param-name>
+			<param-value>
+		ctx:dynamo:/crs/paypal/servlet/CancelPayPalPaymentServlet
+		 </param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>ConfirmPayPalPaymentServletBridge</servlet-name>
+		<servlet-class>com.crs.ServletBridge</servlet-class>
+		<init-param>
+			<param-name>loggingDebug</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<init-param>
+			<param-name>destinationServlet</param-name>
+			<param-value>
+	       ctx:dynamo:/crs/paypal/servlet/ConfirmPayPalPaymentServlet
+	        </param-value>
+		</init-param>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>PayPalInstantUpdateServletBridge</servlet-name>
+		<url-pattern>/paypal/instantupdate</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>CancelPayPalPaymentServletBridge</servlet-name>
+		<url-pattern>/paypal/cancel</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ConfirmPayPalPaymentServletBridge</servlet-name>
+		<url-pattern>/paypal/continue</url-pattern>
+	</servlet-mapping>
+	
   <!-- FOR SEO COMPLIANCE -->
   <servlet>
     <servlet-name>MappedJumpServlet</servlet-name>

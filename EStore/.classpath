@@ -17,6 +17,9 @@
 	<classpathentry kind="lib" path="C:/ATG/ATG11.1/DAS/lib/validation-api-1.0.0.GA.jar"/>
 	<classpathentry kind="lib" path="C:/ATG/ATG11.1/DCS/lib/classes.jar"/>
 	<classpathentry kind="lib" path="C:/ATG/ATG11.1/DCS/lib/resources.jar"/>
-	<classpathentry kind="lib" path="/CommerceReferenceStore.Store.EStore/lib/classes.jar"/>
+	<classpathentry kind="lib" path="C:/ATG/ATG11.1/CommerceReferenceStore/Store/EStore/lib/classes.jar"/>
+	<classpathentry kind="lib" path="C:/ATG/ATG11.1/CommerceReferenceStore/Store/Mobile/lib/classes.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient-4.2.5.jar"/>
+	<classpathentry kind="lib" path="lib/httpcore-4.2.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

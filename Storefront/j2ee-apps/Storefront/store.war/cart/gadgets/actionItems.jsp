@@ -20,8 +20,26 @@
       <fmt:message var="checkoutText" key="common.button.checkoutText"/>
       <dsp:input id="atg_store_checkout" type="submit" bean="CartModifierFormHandler.checkout" value="${checkoutText}"/>
     </span>
+    <span> <dsp:droplet
+				name="/crs/paypal/droplet/PayPalPaymentDroplet">
+				<dsp:param name="profile" bean="/atg/userprofiling/Profile" />
 
-    <%-- 
+				<dsp:oparam name="express">
+					<fmt:message var="checkoutText" key="PayPal Express Checkout" />
+					<dsp:input id="atg_store_paypal_checkout" type="image"
+						bean="CartModifierFormHandler.checkoutWithPayPal"
+						value="PayPal Express Checkout"
+						src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" />
+				</dsp:oparam>
+
+				<dsp:oparam name="error">
+				</dsp:oparam>
+			</dsp:droplet>
+
+
+	</span>
+
+    <!-- 
       Display the express checkout button if: 
         user is logged in,
         user profile is not transient,
@@ -36,7 +54,7 @@
           If displaying the express checkout button is valid.
         false.
           If displaying the express checkout button is invalid.
-    --%>
+    -->
     <dsp:droplet name="ExpressCheckoutOk">
       <dsp:param name="profile" bean="Profile"/>
       <dsp:oparam name="true">
