@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
 ATG-Config-Path: config/
-ATG-Required: DAS DPS DSS CRS.EStore DAS Store.EStore.Versioned
+ATG-Required: DAS DPS DSS CRS.EStore Store.Endeca.Index DAS
 ATG-Class-Path: bin

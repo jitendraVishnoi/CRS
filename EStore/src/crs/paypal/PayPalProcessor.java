@@ -4,18 +4,16 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.HttpException;
 
-import crs.commerce.order.PayPalPaymentGroup;
-import crs.paypal.beans.ErrorBean;
-import crs.paypal.beans.ResponseBean;
-import crs.paypal.beans.SetExpressCheckoutRequest;
-import crs.paypal.beans.ShippingInfoBean;
 import atg.commerce.CommerceException;
 import atg.commerce.multisite.CommerceSitePropertiesManager;
 import atg.commerce.order.CommerceItem;
@@ -38,22 +36,30 @@ import atg.core.util.ContactInfo;
 import atg.core.util.StringUtils;
 import atg.droplet.GenericFormHandler;
 import atg.multisite.SiteContextManager;
+import atg.repository.MutableRepository;
 import atg.repository.MutableRepositoryItem;
+import atg.repository.RepositoryException;
 import atg.repository.RepositoryItem;
+import crs.commerce.order.PayPalPaymentGroup;
+import crs.paypal.beans.ErrorBean;
+import crs.paypal.beans.ResponseBean;
+import crs.paypal.beans.SetExpressCheckoutRequest;
+import crs.paypal.beans.ShippingInfoBean;
 
 public class PayPalProcessor extends GenericFormHandler {
 
 	private String ecSuccessUrl, ecCancelUrl, defaultCurrencyCode,
-			successDestURL, cancelDestURL, handoffURL, merchantDescriptor;
+	successDestURL, cancelDestURL, handoffURL, merchantDescriptor, continueURI, cancelURI;
 	private PaymentGroupManager paymentGroupManager;
 	private PricingTools pricingTools;
 	private OrderManager orderManager;
 	private boolean submitOrderOnPayPalSite, addNote, doInstantUpdateTaxCalc,
-			captureBillingAddress, sendLineItems, useReferenceTransactions;
+	captureBillingAddress, sendLineItems, useReferenceTransactions;
 	private ShippingPricingEngine shippingPricingEngine;
 	private PayPalProcessorHelper payPalProcessorHelper;
 	private CommerceSitePropertiesManager commerceSitePropertiesManager;
 	private PayPalConnection payPalConnection;
+	private MutableRepository profileRepository;
 
 	/**
 	 * @param expressCheckoutRequest
@@ -112,9 +118,9 @@ public class PayPalProcessor extends GenericFormHandler {
 			nameValuePairs.put("ADDROVERRIDE", "1");
 			nameValuePairs.put("PAYMENTREQUEST_0_SHIPTONAME",
 					expressCheckoutRequest.getShippingAddress().getFirstName()
-							+ " "
-							+ expressCheckoutRequest.getShippingAddress()
-									.getLastName());
+					+ " "
+					+ expressCheckoutRequest.getShippingAddress()
+					.getLastName());
 			nameValuePairs.put("PAYMENTREQUEST_0_SHIPTOSTREET",
 					expressCheckoutRequest.getShippingAddress().getAddress1());
 
@@ -143,8 +149,8 @@ public class PayPalProcessor extends GenericFormHandler {
 			nameValuePairs.put("PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE",
 					expressCheckoutRequest.getShippingAddress().getCountry());
 			nameValuePairs
-					.put("PAYMENTREQUEST_0_SHIPTOZIP", expressCheckoutRequest
-							.getShippingAddress().getPostalCode());
+			.put("PAYMENTREQUEST_0_SHIPTOZIP", expressCheckoutRequest
+					.getShippingAddress().getPostalCode());
 			nameValuePairs.put("EMAIL", expressCheckoutRequest.getEmail());
 
 			int index;
@@ -185,7 +191,7 @@ public class PayPalProcessor extends GenericFormHandler {
 								shipOption.getTax()).toString());
 						if (index == 0)
 							nameValuePairs
-									.put(lShippingOptionIsDefault, "true");
+							.put(lShippingOptionIsDefault, "true");
 						else {
 							nameValuePairs.put(lShippingOptionIsDefault,
 									"false");
@@ -237,11 +243,11 @@ public class PayPalProcessor extends GenericFormHandler {
 				DEFAULT_DECIMAL_FORMAT.format(total.doubleValue()));
 
 		customFieldMap
-				.put("sid", expressCheckoutRequest.getOrder().getSiteId());
+		.put("sid", expressCheckoutRequest.getOrder().getSiteId());
 		vlogDebug(
 				"PayPalProcessor.callSetExpressCheckoutDetailedResponse:about to create custom "
 						+ "field based on the following map: {0}",
-				customFieldMap.toString());
+						customFieldMap.toString());
 
 		String customField = PayPalUtils.mapToString(customFieldMap);
 		vlogDebug(
@@ -252,7 +258,7 @@ public class PayPalProcessor extends GenericFormHandler {
 			vlogError(
 					"PayPalProcessor.callSetExpressCheckoutDetailedResponse:The custom field String length is greater "
 							+ "than the 250 allowed characters! Not setting the param. customField:{0}",
-					customField);
+							customField);
 		} else {
 			nameValuePairs.put("PAYMENTREQUEST_0_CUSTOM",
 					PayPalUtils.mapToString(customFieldMap));
@@ -467,7 +473,7 @@ public class PayPalProcessor extends GenericFormHandler {
 						shippingGroup.getCommerceItemRelationshipCount());
 				if (shippingAddress != null) {
 					((HardgoodShippingGroup) shippingGroup)
-							.setShippingAddress(shippingAddress);
+					.setShippingAddress(shippingAddress);
 				}
 				if (profile != null) {
 					shippingPricingModels = getShippingPricingEngine()
@@ -525,7 +531,7 @@ public class PayPalProcessor extends GenericFormHandler {
 									.getCurrentSite()
 									.getPropertyValue(
 											getCommerceSitePropertiesManager()
-													.getDefaultListPriceListPropertyName());
+											.getDefaultListPriceListPropertyName());
 							((MutableRepositoryItem) profile).setPropertyValue(
 									"priceList", priceList);
 							((MutableRepositoryItem) profile).setPropertyValue(
@@ -534,8 +540,8 @@ public class PayPalProcessor extends GenericFormHandler {
 							if (StringUtils.isEmpty((String) profile
 									.getPropertyValue("locale"))) {
 								((MutableRepositoryItem) profile)
-										.setPropertyValue("locale", priceList
-												.getPropertyValue("locale"));
+								.setPropertyValue("locale", priceList
+										.getPropertyValue("locale"));
 							}
 
 							try {
@@ -628,7 +634,7 @@ public class PayPalProcessor extends GenericFormHandler {
 	 * @param order
 	 * @return
 	 */
-	private PayPalPaymentGroup findPayPalPG(Order order) {
+	public PayPalPaymentGroup findPayPalPG(Order order) {
 		vlogDebug("Inside findPayPalPG order :: {0}", order);
 
 		@SuppressWarnings("unchecked")
@@ -756,6 +762,165 @@ public class PayPalProcessor extends GenericFormHandler {
 			}
 		}
 		return response;
+
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void callDoExpressCheckout(PayPalInfo pPayPalInfo) {
+		vlogDebug("PayPalProcessor.callDoExpressCheckout payPalInfo::{0}", pPayPalInfo);
+
+		NumberFormat DEFAULT_DECIMAL_FORMAT = new DecimalFormat("#0.00");
+		HashMap<String,String> nameValuePairs = new HashMap<>();
+		HashMap<String,String> responseMap = new HashMap<>();
+		nameValuePairs.put("METHOD", "DoExpressCheckoutPayment");
+		nameValuePairs.put("TOKEN", pPayPalInfo.getToken());
+		nameValuePairs.put("PAYERID", pPayPalInfo.getPayerId());
+		nameValuePairs.put("PAYMENTREQUEST_0_PAYMENTACTION", "Order");
+		nameValuePairs.put("PAYMENTREQUEST_0_CURRENCYCODE", pPayPalInfo.getCurrencyCode());
+		nameValuePairs.put("PAYMENTREQUEST_0_PAYMENTREQUESTID", pPayPalInfo.getOrder().getId());
+
+		if (pPayPalInfo.getShippingAddress() != null) {
+			nameValuePairs.put("PAYMENTREQUEST_0_SHIPTONAME", pPayPalInfo.getShippingAddress().getFirstName() + " " + pPayPalInfo.getShippingAddress().getLastName());
+			nameValuePairs.put("PAYMENTREQUEST_0_SHIPTOSTREET", pPayPalInfo.getShippingAddress().getAddress1());
+			StringBuffer street2 = new StringBuffer();
+			if ((!StringUtils.isEmpty(pPayPalInfo.getShippingAddress().getAddress2())) 
+					&& (!"null".equals(pPayPalInfo.getShippingAddress().getAddress2()))) {
+				street2.append(pPayPalInfo.getShippingAddress().getAddress2());
+			}
+			if ((!StringUtils.isEmpty(pPayPalInfo.getShippingAddress().getAddress3())) 
+					&& (!"null".equals(pPayPalInfo.getShippingAddress().getAddress3()))){
+				if (street2.length() > 0) {
+					street2.append(' ');
+				}
+				street2.append(pPayPalInfo.getShippingAddress().getAddress3());
+			}
+			if (street2.length() > 0) {
+				nameValuePairs.put("PAYMENTREQUEST_0_SHIPTOSTREET2", street2.toString());
+			}
+			nameValuePairs.put("PAYMENTREQUEST_0_SHIPTOCITY", pPayPalInfo.getShippingAddress().getCity());
+			nameValuePairs.put("PAYMENTREQUEST_0_SHIPTOSTATE", pPayPalInfo.getShippingAddress().getState());
+			nameValuePairs.put("PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE", pPayPalInfo.getShippingAddress().getCountry());
+			nameValuePairs.put("PAYMENTREQUEST_0_SHIPTOZIP", pPayPalInfo.getShippingAddress().getPostalCode());
+			nameValuePairs.put("EMAIL", pPayPalInfo.getEmail());
+		}
+		PayPalPaymentGroup payPalPaymentGroup = findPayPalPG(pPayPalInfo.getOrder());
+		nameValuePairs.put("PAYMENTREQUEST_0_AMT", DEFAULT_DECIMAL_FORMAT.format(payPalPaymentGroup.getAmount()));
+		nameValuePairs.put("PAYMENTREQUEST_0_TAXAMT", Double.toString(pPayPalInfo.getOrder().getPriceInfo().getTax()));
+		nameValuePairs.put("PAYMENTREQUEST_0_SHIPPINGAMT", Double.toString(pPayPalInfo.getOrder().getPriceInfo().getShipping()));
+		processCartItems(nameValuePairs, pPayPalInfo.getOrder());
+		try {
+			responseMap = getPayPalConnection().call(nameValuePairs);
+			vlogDebug("PayPalProcessor.callDoExpressCheckout: got responseMap from call: {0}", responseMap);
+			pPayPalInfo.setTransactionId((String)responseMap.get("PAYMENTINFO_0_TRANSACTIONID"));
+
+			if (isUseReferenceTransactions()) {
+				vlogDebug("PayPalProcessor.callDoExpressCheckout:looking for billing agreement id");
+				String billingAgreementId = (String)responseMap.get("BILLINGAGREEMENTID");
+				if (StringUtils.isNotEmpty(billingAgreementId)) {
+					vlogDebug("PayPalProcessor.callDoExpressCheckout:got billing agreement id: {0}", billingAgreementId);
+
+					try {
+						vlogDebug("PayPalProcessor.callDoExpressCheckout:creating billing agreement.");
+
+						MutableRepositoryItem payPalBillingAgreement = getProfileRepository().createItem("paypalBillingAgreement");
+						payPalBillingAgreement.setPropertyValue("billingAgreementId", billingAgreementId);
+						payPalBillingAgreement.setPropertyValue("creationDate", new Date());
+						payPalBillingAgreement.setPropertyValue("billingAgreementType", "MerchantInitiatedBillingSingleAgreement");
+						payPalBillingAgreement.setPropertyValue("paymentType", "InstantOnly");
+
+						vlogDebug("PayPalProcessor.callDoExpressCheckout:adding billing agreement to repository.");
+
+						String profileId = pPayPalInfo.getOrder().getProfileId();
+						vlogDebug("PayPalProcessor.callDoExpressCheckout:profile id from order: " + profileId);
+
+						MutableRepositoryItem mutProfileRepoItem = getProfileRepository().getItemForUpdate(profileId, "user");
+						Map billingAgreements = (Map)mutProfileRepoItem.getPropertyValue("paypalBillingAgreements");
+						vlogDebug("PayPalProcessor.callDoExpressCheckout:existing billing agreements: {0}", billingAgreements.toString());
+
+						if (billingAgreements.size() == 0) {
+							vlogDebug("PayPalProcessor.callDoExpressCheckout:0 existing billing agreements.  Adding this as the default.");
+							vlogDebug("PayPalProcessor.callDoExpressCheckout:setting default paypal billing agreement on profile id: {0}", mutProfileRepoItem.getRepositoryId());
+							billingAgreements.put("default", payPalBillingAgreement);
+							mutProfileRepoItem.setPropertyValue("defaultPaypalBillingAgreement", payPalBillingAgreement);
+							vlogDebug("PayPalProcessor.callDoExpressCheckout:added as the default billing agreement.");
+						} else {
+							vlogDebug("PayPalProcessor.callDoExpressCheckout:adding as an alternate billing agreement.");
+							billingAgreements.put("BillingAgreement" + (billingAgreements.size() + 1), payPalBillingAgreement);
+							vlogDebug("PayPalProcessor.callDoExpressCheckout:added as alternate billing agreement.");
+						}
+
+						mutProfileRepoItem.setPropertyValue("paypalBillingAgreements", billingAgreements);
+						getProfileRepository().updateItem(mutProfileRepoItem);
+					} catch (RepositoryException e) {
+						vlogError(e,"PayPalProcessor.callDoExpressCheckout:{0}");
+					}
+				}
+			}
+		}
+		catch (HttpException he){
+			vlogError(he,"PayPalProcessor.callDoExpressCheckout: caught HTTPException. {0}");
+		}
+		catch (IOException ioe) {
+			vlogError(ioe,"PayPalProcessor.callDoExpressCheckout: caught IOException. ");
+		}
+
+	}
+	
+	public PayPalStatus callDoAuthorization(PayPalInfo pPayPalInfo) {
+		vlogDebug("PayPalProcessor.callDoAuthorization:called.");
+	    
+	    PayPalStatus status = new PayPalStatus();
+	    HashMap<String,String> nameValuePairs = new HashMap<>();
+	    HashMap<String,String> responseMap = new HashMap<>();
+
+	    if (StringUtils.isNotEmpty(pPayPalInfo.getBillingAgreementId())) {
+	      nameValuePairs.put("METHOD", "DoReferenceTransaction");
+	      nameValuePairs.put("REFERENCEID", pPayPalInfo.getBillingAgreementId());
+	      nameValuePairs.put("PAYMENTACTION", "Authorization");
+	    } else {
+	      nameValuePairs.put("METHOD", "DoAuthorization");
+	      nameValuePairs.put("TRANSACTIONID", pPayPalInfo.getTransactionId());
+	      nameValuePairs.put("PAYMENTACTION", "Order");
+	    }
+	    nameValuePairs.put("AMT", String.valueOf(pPayPalInfo.getAmount()));
+	    try {
+	      responseMap = getPayPalConnection().call(nameValuePairs);
+	      String strAck = (String)responseMap.get("ACK");
+	      vlogDebug("PayPalProcessor.callDoAuthorization:strAck:{0}", strAck);
+	      status.setTimeStamp(new Date());
+	      try {
+	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+	        status.setTransactionTimestamp(sdf.parse((String)responseMap.get("TIMESTAMP")));
+	      } catch (Exception e) {
+	        vlogError(e, "PayPalProcessor.callDoAuthorization:Exception parsing the date! {0}");
+	      }
+	      status.setTransactionId((String)responseMap.get("TRANSACTIONID"));
+	      status.setCorrelationId((String)responseMap.get("CORRELATIONID"));
+
+	      if (strAck != null) {
+	        if (strAck.startsWith("Success")) {
+	          vlogDebug("PayPalProcessor.callDoAuthorization:success!");
+	          status.setTransactionSuccess(true);
+	          status.setAmount(new Double((String)responseMap.get("AMT")).doubleValue());
+	          status.setProtectionEligibility((String)responseMap.get("PROTECTIONELIGIBILITY"));
+	        } else {
+	          vlogDebug("PayPalProcessor.callDoAuthorization:failed!");
+	          status.setTransactionSuccess(false);
+	          status.setErrorMessage((String)responseMap.get("PAYMENTSTATUS") + ":" + (String)responseMap.get("PENDINGREASON"));
+	        }
+	      } else {
+	        vlogDebug("PayPalProcessor.callDoAuthorization:bad response");
+	        status.setTransactionSuccess(false);
+	        status.setErrorMessage("Bad Response from PayPal");
+	      }
+	    } catch (HttpException he) {
+	      vlogError("PayPalProcessor.callDoAuthorization: HttpException caught - ", he);
+	    }
+	    catch (IOException ioe) {
+	    	vlogError("PayPalProcessor.callDoAuthorization: IOException caught - ", ioe);
+
+	    }
+	    return status;
 
 	}
 
@@ -921,6 +1086,30 @@ public class PayPalProcessor extends GenericFormHandler {
 
 	public void setMerchantDescriptor(String merchantDescriptor) {
 		this.merchantDescriptor = merchantDescriptor;
+	}
+
+	public String getContinueURI() {
+		return continueURI;
+	}
+
+	public void setContinueURI(String continueURI) {
+		this.continueURI = continueURI;
+	}
+
+	public String getCancelURI() {
+		return cancelURI;
+	}
+
+	public void setCancelURI(String cancelURI) {
+		this.cancelURI = cancelURI;
+	}
+
+	public MutableRepository getProfileRepository() {
+		return profileRepository;
+	}
+
+	public void setProfileRepository(MutableRepository profileRepository) {
+		this.profileRepository = profileRepository;
 	}
 
 }

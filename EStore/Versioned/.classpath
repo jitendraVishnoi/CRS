@@ -16,5 +16,12 @@
 	<classpathentry kind="lib" path="C:/ATG/ATG11.1/DAS/lib/spring-aop-1.2-rc1.jar"/>
 	<classpathentry kind="lib" path="C:/ATG/ATG11.1/DAS/lib/jline-0.9.94.jar"/>
 	<classpathentry kind="lib" path="C:/ATG/ATG11.1/DAS/lib/validation-api-1.0.0.GA.jar"/>
+	<classpathentry kind="lib" path="C:/ATG/ATG11.1/CommerceReferenceStore/Store/EStore/Versioned/lib/classes.jar"/>
+	<classpathentry kind="lib" path="C:/ATG/ATG11.1/DCS-UI/Versioned/lib/classes.jar"/>
+	<classpathentry kind="lib" path="C:/ATG/ATG11.1/BIZUI/lib/classes.jar"/>
+	<classpathentry kind="lib" path="C:/ATG/ATG11.1/PubPortlet/lib/classes.jar"/>
+	<classpathentry kind="lib" path="C:/ATG/ATG11.1/Publishing/base/lib/classes.jar"/>
+	<classpathentry kind="lib" path="C:/ATG/ATG11.1/Publishing/base/lib/subclassloader.jar"/>
+	<classpathentry kind="lib" path="C:/JBoss/jboss-eap-6.1/modules/system/layers/base/javax/ejb/api/main/jboss-ejb-api_3.1_spec-1.0.2.Final-redhat-2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

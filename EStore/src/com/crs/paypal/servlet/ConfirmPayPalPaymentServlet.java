@@ -29,6 +29,7 @@ import atg.nucleus.servlet.HttpServletService;
 import atg.service.pipeline.PipelineResult;
 import atg.servlet.ServletUtil;
 import crs.commerce.order.PayPalPaymentGroup;
+import crs.order.purchase.CRSCheckoutProgressStates;
 import crs.paypal.PayPalDetails;
 import crs.paypal.PayPalProcessor;
 
@@ -39,6 +40,7 @@ public class ConfirmPayPalPaymentServlet extends HttpServletService{
 	private PaymentGroupManager paymentGroupManager;
 	private OrderManager orderManager;
 	private TransactionManager transactionManager;
+	private String checkoutProgressStates;
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void service(HttpServletRequest pRequest, HttpServletResponse pResponse)
@@ -149,10 +151,12 @@ public class ConfirmPayPalPaymentServlet extends HttpServletService{
 		          vlogDebug("ConfirmPayPalPaymentServlet.service:redirecting to: {0}", getPayPalProcessor().getEcSuccessUrl());
 		        pResponse.sendRedirect(getPayPalProcessor().getEcSuccessUrl());
 		      } else {
-		        vlogDebug("ConfirmPayPalPaymentServlet.service:redirecting to: {0}", getPayPalProcessor().getSuccessDestURL());
-
-		        pResponse.sendRedirect(getPayPalProcessor().getSuccessDestURL());
+		        vlogDebug("ConfirmPayPalPaymentServlet.service:redirecting to: {0}", getPayPalProcessor().getContinueURI());
+		        pResponse.sendRedirect(getPayPalProcessor().getContinueURI());
 		      }
+		      //updating current state
+		      CRSCheckoutProgressStates checkoutProgressStates = (CRSCheckoutProgressStates) ServletUtil.getDynamoRequest(pRequest).resolveName(getCheckoutProgressStates());
+		      checkoutProgressStates.setCurrentLevel("CONFIRM");
 		    } else {
 		      vlogError("ConfirmPayPalPaymentServlet.service:Error occured!!!");
 		      PrintWriter out = pResponse.getWriter();
@@ -266,6 +270,15 @@ public class ConfirmPayPalPaymentServlet extends HttpServletService{
 
 	public void setTransactionManager(TransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
+	}
+
+	public String getCheckoutProgressStates() {
+		return checkoutProgressStates;
+	}
+
+	public void setCheckoutProgressStates(
+			String checkoutProgressStates) {
+		this.checkoutProgressStates = checkoutProgressStates;
 	}
 
 }

@@ -1,0 +1,18 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+
+<!--
+  Indexing Dependency Schema for Commerce Catalogs
+  
+  @version $Id: //hosting-blueprint/B2CBlueprint/version/11.1/Endeca/Index/config/atg/commerce/endeca/index/product-sku-output-config.xml#4 $
+  @updated $DateTime: 2014/04/23 22:55:51 $ 
+-->
+
+<item item-descriptor-name="product">
+
+  <properties>
+    <property name="priceListPair" is-dimension="true" type="boolean" property-accessor="/crs/commerce/endeca/index/accessor/PromotionAccessor" output-name="product.discountAvailable" is-non-repository-property="true"/>
+  </properties>
+  
+  
+</item>
+<!-- @version $Id: //hosting-blueprint/B2CBlueprint/version/11.1/Endeca/Index/config/atg/commerce/endeca/index/product-sku-output-config.xml#4 $$Change: 885024 $-->

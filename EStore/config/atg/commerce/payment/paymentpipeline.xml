@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE pipelinemanager
+	PUBLIC "-//Art Technology Group, Inc.//DTD Dynamo Pipeline Manager//EN"
+	'http://www.atg.com/dtds/pipelinemanager/pipelinemanager_1.0.dtd'>
+	
+<pipelinemanager>
+	<pipelinechain name="payPalProcessorChain" transaction="TX_REQUIRED" headlink="createPayPalInfo">
+		<pipelinelink name="createPayPalInfo" transaction="TX_MANDATORY">
+			<processor jndi="/crs/paypal/payment/processor/ProcCreatePayPalInfo" />
+			<transition returnvalue="1" link="processPayPal" />
+		</pipelinelink>
+		<pipelinelink name="processPayPal" transaction="TX_MANDATORY">
+			<processor jndi="/crs/paypal/payment/processor/ProcProcessPayPal" />
+		</pipelinelink>
+	</pipelinechain>
+</pipelinemanager>
