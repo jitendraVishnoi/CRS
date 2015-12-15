@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE gsa-template
+        PUBLIC "-//Art Technology Group, Inc.//DTD General SQL Adapter//EN"
+        "http://www.atg.com/dtds/gsa/gsa_1.0.dtd">
+<gsa-template>
+    <header>
+        <name>Store Template</name>
+        <author>Jitendra</author>
+    </header>
+   
+	<item-descriptor name="store" display-name-resource="store" display-property="storeName" display-name="store" cache-mode="simple">
+		<attribute name="resourceBundle" value="crs.cms.StoreTemplateResources"/>
+		
+		<table name="STORE_TEMPLATE" type="primary" id-column-name="store_template_id" >
+			<property name="id" column-name="store_template_id" display-name-resource="id" />
+	        <property name="storeName" column-name="store_name" data-type="string" display-name-resource="storeName" />
+	        <property name="storeOwnerName" column-name="store_owner_name" data-type="string" display-name-resource="storeOwnerName" />
+	        <property name="city" column-name="store_city" data-type="string" display-name-resource="city" />
+	        <property name="workingHours" column-name="working_hours" data-type="string" display-name-resource="workingHours" />
+	        <property name="storeOwnerImage" column-name="store_owner_image" data-type="string" display-name-resource="storeOwnerImage" />
+	        <property name="storeImage" column-name="store_image" data-type="string" display-name-resource="storeImage" />
+	        <property name="storeOwnerId" column-name="store_owner_no" data-type="string" display-name-resource="storeOwnerId" />
+	        <property name="street" column-name="street" data-type="string" display-name-resource="street" />
+			<property name="postalCode" column-name="postalCode" data-type="string" display-name-resource="postalCode" />
+			<property name="area" column-name="area" data-type="string" display-name-resource="area" />
+			<property name="enable" data-type="boolean" column-name="enable" display-name-resource="enable" default="true"/>
+      					
+			<property name="storeOwnerEmail" column-name="store_email_id" data-type="string" display-name-resource="storeOwnerEmail" />
+			
+			<property name="companyRegistrationNumber" column-name="company_registration_number" data-type="string" display-name-resource="companyRegistrationNumber" />
+			<property name="storePhoneNumber" column-name="store_phone_number" data-type="string" display-name-resource="storePhoneNumber" />
+		</table>
+
+		<table name="STORE_PUBLISHED" type="auxiliary" id-column-name="store_template_id">
+	    	<property name="published" column-name="published" data-type="boolean" display-name-resource="published" default="false"/>
+		</table>
+			
+		<table name="STORE_LOCATION" type="auxiliary" id-column-name="store_id">
+			<property name="longitude" column-name="longitude" data-type="string" queryable="true" writable="true"/>
+			<property name="latitude" column-name="latitude" data-type="string" queryable="true" writable="true"/>
+		</table>
+	</item-descriptor>
+	
+</gsa-template>

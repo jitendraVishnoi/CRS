@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE browse-hierarchy
+  PUBLIC "-//Art Technology Group, Inc.//DTD Asset Manager Browse Hierarchy//EN"
+  'http://www.atg.com/dtds/browse-hierarchy/browse-hierarchy_1.0.dtd'>
+
+<browse-hierarchy root="home" xml-combine="append">
+
+	<browse-item id="home" xml-combine="append">
+		<browse-item reference-id="crsStore"/>
+	</browse-item>
+	
+	<browse-item id="crsStore" is-root="true" label="Stores">      
+      <list-definition id="crsStores"
+                     retriever="query"
+                     child-type="/crs/store/StoreRepository:store">
+                     
+         <retriever-parameter name="query"
+                              value="ALL" />
+    </list-definition>
+  </browse-item> <!-- end store locations nod -->
+
+</browse-hierarchy>

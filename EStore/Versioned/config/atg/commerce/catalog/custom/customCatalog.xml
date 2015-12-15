@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE gsa-template SYSTEM "dynamosystemresource:/atg/dtds/gsa/gsa_1.0.dtd">
+
+<gsa-template>
+
+	<header>
+		<name>CRS Store</name>
+		<author>ATG</author>
+		<version>$Revision: #1 $</version>
+	</header>
+
+
+	
+
+</gsa-template>
