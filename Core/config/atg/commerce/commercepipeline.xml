@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE pipelinemanager
+        PUBLIC "-//Art Technology Group, Inc.//DTD Dynamo Pipeline Manager//EN"
+        'http://www.atg.com/dtds/pipelinemanager/pipelinemanager_1.0.dtd'>
+
+<pipelinemanager>
+
+	<pipelinechain resultclassname="atg.service.pipeline.PipelineResultImpl" transaction="TX_REQUIRED" classname="atg.service.pipeline.PipelineChain" name="repriceOrder" headlink="priceOrderTotal">
+       <pipelinelink transaction="TX_MANDATORY" name="priceOrderTotal">
+          <processor jndi="/atg/commerce/pricing/processor/PriceOrderTotal"/>
+          <transition returnvalue="1" link="doNothingProcessor"/>
+       </pipelinelink>
+       <pipelinelink name="doNothingProcessor" transaction="TX_SUPPORTS">
+       		<processor jndi="/crs/commerce/pricing/DoNothingProc"/>
+       </pipelinelink>
+    </pipelinechain>
+</pipelinemanager>

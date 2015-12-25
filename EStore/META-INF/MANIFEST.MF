@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
 ATG-Config-Path: config/
-ATG-Required: DAS DPS DSS DAS Store.EStore
+ATG-Required: DAS DPS DSS DAS Store.EStore CRS.Core
 ATG-Class-Path: bin lib/ojdbc6.jar lib/httpclient-4.2.5.jar lib/httpcore-4.2.4.jar
