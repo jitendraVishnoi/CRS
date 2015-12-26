@@ -1,0 +1,13 @@
+<actor-template default-chain-id="addNumber"
+                xsi:noNamespaceSchemaLocation="http://www.atg.com/xsds/actorChain_1.0.xsd"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                
+	<actor-chain id="addNumber" transaction="TX_SUPPORTS">
+		<component id="dodo" name="/crs/rest/AddTwoNumber" method="addTwo" component-var="dog" method-return-var="returnVal">
+			<input name="pointless3" class-name="double" value="${param.number1}" index="0" />
+        	<input name="pointless4" class-name="double" value="${param.number2}" index="1" />
+        	<output id="pointless5" name="sum" value="${returnVal}" />
+		</component>
+	</actor-chain>
+                
+</actor-template>                

@@ -2,7 +2,6 @@ package crs.dynamo.messaging;
 
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
-import javax.jms.TextMessage;
 
 import atg.dms.patchbay.MessageSource;
 import atg.dms.patchbay.MessageSourceContext;
@@ -11,8 +10,8 @@ import atg.nucleus.ServiceException;
 
 public class DemoMessageSource extends GenericService implements MessageSource {
 
-	MessageSourceContext messageSourceContext;
-	boolean started;
+	private MessageSourceContext messageSourceContext;
+	private boolean started;
 	
 	@Override
 	public void setMessageSourceContext(MessageSourceContext messageSourceContext) {
@@ -23,13 +22,13 @@ public class DemoMessageSource extends GenericService implements MessageSource {
 	@Override
 	public void startMessageSource() {
 		vlogDebug("startMessageSource() is being called");
-		started = true;
+		setStarted(true);
 	}
 
 	@Override
 	public void stopMessageSource() {
 		vlogDebug("stopMessageSource() is being called");
-		started = false;
+		setStarted(false);
 	}
 	
 	/** This method will do actual work
@@ -38,15 +37,21 @@ public class DemoMessageSource extends GenericService implements MessageSource {
 	public void sendMessage() throws JMSException {
 		vlogDebug("Inside DemoMessageSource.sendMessage");
 		if (started && messageSourceContext != null) {
-			TextMessage textMessage = messageSourceContext.createTextMessage("myPort");
-			textMessage.setJMSType("crs.msg.local");
-			textMessage.setText("Hello Charli.. Hello !!");
-			messageSourceContext.sendMessage("myPort", textMessage);
+			ObjectMessage msg = getMessageSourceContext().createObjectMessage("myPort");
+			msg.setJMSType("crs.msg.local");
 			
-			TextMessage message = messageSourceContext.createTextMessage("sqlJMSPort");
-			message.setJMSType("crs.msg.sql");
-			message.setText("ELEPHANT OBJECT");
-			messageSourceContext.sendMessage("sqlJMSPort",message);
+			DummyMessage dummyMessage = new DummyMessage();
+			dummyMessage.setMessage("Hello Charli.. Hello !!");
+			msg.setObject(dummyMessage);
+			getMessageSourceContext().sendMessage("myPort",msg);
+			
+			ObjectMessage sqlMsg = getMessageSourceContext().createObjectMessage("sqlJMSPort");
+			sqlMsg.setJMSType("crs.msg.sql");
+			
+			DummyMessage msg2 = new DummyMessage();
+			msg2.setMessage("ELEPHANT OBJECT");
+			sqlMsg.setObject(msg2);
+			getMessageSourceContext().sendMessage("sqlJMSPort", sqlMsg);
 			vlogDebug("Exting DemoMessageSource.sendMessage");
 		}
 	}
@@ -71,4 +76,17 @@ public class DemoMessageSource extends GenericService implements MessageSource {
 		super.doStopService();
 	}
 
+	public boolean isStarted() {
+		return started;
+	}
+
+	public void setStarted(boolean started) {
+		this.started = started;
+	}
+
+	public MessageSourceContext getMessageSourceContext() {
+		return messageSourceContext;
+	}
+
+	
 }

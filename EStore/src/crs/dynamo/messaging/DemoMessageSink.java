@@ -13,17 +13,17 @@ public class DemoMessageSink extends GenericService implements MessageSink{
 
 	@Override
 	public void receiveMessage(String pPort, Message pMessage) throws JMSException {
-		
+		vlogDebug("Inside DemoMessageSink.receiveMessage");
 		System.out.printf("Message recived at port:%s with JMSType:%s",pPort, pMessage.getJMSType());
 		
 		if (pMessage instanceof TextMessage) {
 			System.out.printf("TextMessage::%s", pMessage);
 		} else if (pMessage instanceof ObjectMessage) {
-			System.out.printf("ObjectMessage::%s", pMessage);
+			System.out.printf("ObjectMessage::%s", ((ObjectMessage) pMessage).getObject());
 		} else if (pMessage instanceof StreamMessage) {
 			System.out.printf("StreamMessage::%s", pMessage);
 		} 
-		
+		vlogDebug("Exting DemoMessageSink.receiveMessage");
 	}
 
 }

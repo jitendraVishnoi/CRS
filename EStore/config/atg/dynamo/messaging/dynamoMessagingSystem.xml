@@ -40,6 +40,7 @@
 				</output-destination>
 			</output-port>
 		</message-source>
+		
 		<message-sink>
 			<nucleus-name>
 				/crs/dynamo/messaging/DemoMessageSink
@@ -61,6 +62,7 @@
 				</input-destination>
 			</input-port>
 		</message-sink>
+		
 		<message-sink>
 			<nucleus-name>
 				/crs/dynamo/messaging/DemoSqlMessageSink
@@ -82,8 +84,43 @@
 				</input-destination>
 			</input-port>
 		</message-sink>
+		
 	</patchbay>
+	
 	<local-jms>
 		<topic-name>/DummyDestination</topic-name>
 	</local-jms>
+	
+	<message-registry>
+	
+	<message-family>
+	<message-family-name>Crs Message</message-family-name>
+	 <message-type>
+        <jms-type>crs.msg.local</jms-type>
+        <message-class>crs.dynamo.messaging.DummyMessage</message-class>
+        <message-context>session</message-context>
+        <display-name>
+          CRS local message
+        </display-name>
+        <description>
+          This is type of local text message.
+        </description>
+      </message-type>
+      
+      <message-type>
+        <jms-type>crs.msg.sql</jms-type>
+        <message-class>crs.dynamo.messaging.DummyMessage</message-class>
+        <message-context>session</message-context>
+        <display-name>
+          CRS sql message
+        </display-name>
+        <description>
+          This is type of sql text message.
+        </description>
+      </message-type>
+    </message-family>
+  
+    
+  </message-registry>
+
 </dynamo-message-system>
